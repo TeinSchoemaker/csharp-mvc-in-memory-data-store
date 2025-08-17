@@ -4,7 +4,7 @@ using exercise.wwwapi.Model;
 
 namespace exercise.wwwapi.Repository
 {
-    public class ProductRepository : IProductRespository
+    public class ProductRepository : IProductRepository
     {
         private DataContext _db;
 
@@ -13,11 +13,11 @@ namespace exercise.wwwapi.Repository
             _db = db;
         }
 
-        public async Task<Product> CreateProduct(Product entity)
+        public async Task<Product> CreateProduct(Product product)
         {
-            await _db.Products.AddAsync(entity);
+            await _db.Products.AddAsync(product);
             await _db.SaveChangesAsync();
-            return entity;
+            return product;
         }
 
         public async Task<List<Product>> GetAllProducts()
@@ -32,14 +32,14 @@ namespace exercise.wwwapi.Repository
 
         public async Task<Product> UpdateProduct(Product product)
         {
-            var oldProduct = await _db.Products.FindAsync(product.Id);
+            var newproduct = await _db.Products.FindAsync(product.Id);
             
-            oldProduct.Name = product.Name;
-            oldProduct.Category = product.Category;
-            oldProduct.Price = product.Price;
+            newproduct.Name = product.Name;
+            newproduct.Category = product.Category;
+            newproduct.Price = product.Price;
 
             await _db.SaveChangesAsync();
-            return oldProduct;
+            return newproduct;
         }
 
         public async Task<Product> DeleteProduct(int id)

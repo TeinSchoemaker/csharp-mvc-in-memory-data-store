@@ -2,7 +2,7 @@
 
 namespace exercise.wwwapi.Repository
 {
-    public interface IProductRespository
+    public interface IProductRepository
     {
         Task<Product> CreateProduct(Product product);
         Task<List<Product>> GetAllProducts();

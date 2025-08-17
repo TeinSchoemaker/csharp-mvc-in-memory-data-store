@@ -11,50 +11,60 @@ namespace exercise.wwwapi.Endpoints
         {
             var products = app.MapGroup("products");
 
-            products.MapPost("/", CreateProduct);
+            products.MapPost("/{product}", CreateProduct);
             products.MapGet("/", GetAllProducts);
             products.MapGet("/{id}", GetProductsById);
-            products.MapPut("/{id}", UpdateProduct);
+            products.MapPut("/{product}", UpdateProduct);
             products.MapDelete("/{id}", DeleteProduct);
 
         }
 
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public static async Task<IResult> CreateProduct(IProductRespository repository, NewProduct product)
+        public static async Task<IResult> CreateProduct(IProductRepository repository, string name, string category, int price)
         {
-            Product entity = new Product();
-            entity.Name = product.Name;
-            entity.Category = product.Category;
-            entity.Price = product.Price;
+            var newProduct = new Product
+            {
+                Name = name,
+                Category = category,
+                Price = price,
+            };
 
-            await repository.CreateProduct(entity);
+            await repository.CreateProduct(newProduct);
 
-            return TypedResults.Created($"https://localhost:7197/products/{entity.Id}", entity);
+            return TypedResults.Created($"/products/{newProduct.Id}", newProduct);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> GetAllProducts(IProductRespository repository)
+        public static async Task<IResult> GetAllProducts(IProductRepository repository)
         {
             var results = await repository.GetAllProducts();
             return TypedResults.Ok(results);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> GetProductsById(IProductRespository repository, int id)
+        public static async Task<IResult> GetProductsById(IProductRepository repository, int id)
         {
             var result = await repository.GetProductById(id);
             return TypedResults.Ok(result);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> UpdateProduct(IProductRespository repository, int id, Product product)
+        public static async Task<IResult> UpdateProduct(IProductRepository repository, string name, int id, string category, int price)
         {
-            var updated = await repository.UpdateProduct(product);
-            return TypedResults.Created($"https://localhost:7197/products/{updated.Id}" , updated);
+            var newProduct = new Product
+            {
+                Id = id,
+                Name = name,
+                Category = category,
+                Price = price,
+            };
+
+            var updated = await repository.UpdateProduct(newProduct);
+            return TypedResults.Ok(updated);
         }
 
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public static async Task<IResult> DeleteProduct(IProductRespository repository, int id)
+        public static async Task<IResult> DeleteProduct(IProductRepository repository, int id)
         {
             var deleted = await repository.DeleteProduct(id);
             return TypedResults.Ok(deleted);
